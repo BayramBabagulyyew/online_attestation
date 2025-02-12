@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%=pageTitle%></title>
+    <link rel="stylesheet" href="css/admin.css" />
+  </head>
+  <header role="banner">
+    <h1>Online Test admin</h1>
+    <ul class="utilities">
+      <br />
+      <li class="users"><a href="/admin/profile?id=<%=id%>">My Account</a></li>
+      <li class="logout warn">
+        <a href="/admin/logout?id=<%=id%>">Log Out</a>
+      </li>
+    </ul>
+  </header>
+
+  <nav role="navigation">
+    <ul class="main">
+      <li class="dashboard"><a href="/admin?id=<%=id%>">Dashboard</a></li>
+
+      <li class="write">
+        <a href="/admin/add-test?id=<%=id%>" method="POST">Tests</a>
+      </li>
+      <li class="users"><a href="#">Manage Users</a></li>
+    </ul>
+  </nav>
+
+  <main role="main">
+    <section class="panel important">
+      <h2>Groups</h2>
+      <ul>
+        <% if (groupUser) { %> <% for (let group of groupUser) { %>
+
+        <li>
+          <h2>Group: <b><%= group.group%></b></h2>
+          <p>Students: <b><%=group.count%></b></p>
+          <% let k=0 %> <% for (let user of group.users) { %>
+          <b><%= ++k; %>. </b>
+          <%=user.username%>
+          <br />
+          <% } %>
+        </li>
+        <hr />
+
+        <% } } %>
+      </ul>
+    </section>
+  </main>
+</html>

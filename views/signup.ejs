@@ -1,0 +1,71 @@
+<%- include("./includes/head.ejs")%>
+<%- include("./includes/navbar.ejs")%>
+    <main>
+      <form >
+        <h1>Sign Up</h1>
+        <div id="error"></div>
+        <label for="group">Group</label>
+        <input type="number" id="group" name="group" required maxlength="6"/>
+
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" required />
+
+        <label for="email">Id card number</label>
+        <input type="number" id="cardId" name="cardId" required  novalidate/>
+
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" required />
+       
+        <label for="con-password">Confirm Password</label>
+        <input type="password" id="con-password" name="con-password" required />
+       
+        <!-- <label for="id-number">ID Card Number</label>
+        <input type="number" id="id-number" name="id-number" minlength="6" required /> -->
+
+        <button type="button" class="btn" onclick="sign(this)">Sign Up</button>
+      </form>
+    </main>
+  </body>
+</html>
+<script>
+const sign = (btn) => {
+  const name = btn.parentNode.querySelector("[name=username]").value;
+  const cardId = btn.parentNode.querySelector("[name=cardId]").value;
+  const password = btn.parentNode.querySelector("[name=password]").value;
+  const conPassword = btn.parentNode.querySelector("[name=con-password]").value;
+  const group = btn.parentNode.querySelector("[name=group]").value;
+
+
+  fetch("/test/signup" ,{
+    method: "POST",
+    headers:{
+      "Content-Type": "application/json"
+    },
+    body:JSON.stringify({
+        name: name,
+        cardId: cardId,
+        password: password,
+        conPassword: conPassword,
+        group: group,
+    })
+  })
+    .then((result) => {
+        return result.json();
+    })
+    .then((data) => {
+        if (data.error){
+        const div = document.getElementById("error").innerHTML=data.error;
+        }
+        else{ 
+          if (data.url){
+            window.location.replace(data.url);
+          }
+        }
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
+    
+</script>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%=pageTitle%></title>
+    <link rel="stylesheet" href="/css/admin.css" />
+    <style>
+ 
+.main h2 {
+    color: #333;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.card {
+    background-color: #fff;
+    border-radius: 18px;
+    box-shadow: 1px 1px 8px 0 grey;
+    height: auto;
+    margin-bottom: 20px;
+    padding: 20px 0 20px 50px;
+    margin-top: 5%;
+    margin-left: 29%;
+    font-size: 28px;
+    padding: 0 10px;
+    width: 58%;
+}
+
+.card table {
+    border: none;
+    font-size: 16px;
+    height: 270px;
+    width: 80%;
+}
+
+.edit {
+    position: absolute;
+    color: #e7e7e8;
+    right: 14%;
+}
+
+    
+    </style>
+  </head>
+  <header role="banner">
+    <h1>Online Test admin</h1>
+    <ul class="utilities">
+      <br />
+      <li class="users"><a href="/admin/profile?id=<%=id%>">My Account</a></li>
+      <li class="logout warn"> <a href="/admin/logout?id=<%=id%>">Log Out</a></li>
+    </ul>
+  </header>
+
+  <nav role="navigation">
+    <ul class="main">
+      <li class="dashboard"><a href="/admin?id=<%=id%>">Dashboard</a></li>
+      <li class="write"><a href="/admin/add-test?id=<%=id%>" method="POST">Tests</a></li>
+      <li class="users"><a href="#">Manage Users</a></li>
+    </ul>
+  </nav>
+  <div class="main">
+    <h2>IDENTITY</h2>
+    <div class="card">
+        <div class="card-body">
+            <i class="fa fa-pen fa-xs edit"></i>
+            <table>
+                <tbody>
+                    <tr>
+                        <td>Name</td>
+                        <td>:</td>
+                        <td><%= admin.username%></td>
+                    </tr>
+                    <tr>
+                        <td>Password</td>
+                        <td>:</td>
+                        <td><%= admin.password %></td>
+                    </tr>
+                    
+                </tbody>
+            </table>
+            <button class="btn">Edit</button>
+            <button class="btn" onclick="del('<%=id%>')">Delete account</button>
+        </div>
+    </div>
+</html>
+
+<script>
+   function del(id){
+    fetch(`/admin/delete?id=${id}`,{
+        method: "POST",
+    })
+    .then(data=>{
+        return data.json();
+    })
+    .then(result=>{
+        console.log(result);
+    })
+    .catch(err=>{console.log(err);})
+
+    
+   }
+</script>

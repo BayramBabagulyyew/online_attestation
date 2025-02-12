@@ -1,0 +1,80 @@
+<%- include("./includes/head.ejs")%>
+<%- include("./includes/navbar.ejs")%>
+    <main>
+      <form>
+		<h1>Log In</h1>
+    <div id="error"></div>
+        <label for="username">Id number</label>
+        <input type="text" id="username" name="username" required />
+
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" required />
+
+        <button type="button" class="btn" onclick="login(this)">Log In</button>
+		<p> If you don't have account <a href="/test/signup" style="color: blue; text-decoration: underline;">Sign up</a> </p>
+      </form>
+
+    </main>
+  </body>
+</html>
+<script>
+  const login = (btn) => {
+    const name = btn.parentNode.querySelector("[name=username]").value;
+    const password = btn.parentNode.querySelector("[name=password]").value;
+  
+  
+    fetch("/test/login" ,{
+      method: "POST",
+      headers:{
+        "Content-Type": "application/json"
+      },
+      body:JSON.stringify({
+          name: name,
+          password: password,
+      })
+    })
+      .then((result) => {
+          return result.json();
+      })
+      .then((data) => {
+          if (data.error){
+          const div = document.getElementById("error").innerHTML=data.error;
+          }
+          else{ 
+            if(data.prompt){
+                var pass = prompt('Ozunize berlen shahsy parolynyzy girizin:');
+                fetch("/login-admin",{
+                  method:"POST",
+                  headers:{
+                    "Content-Type":"application/json"
+                  },
+                  body: JSON.stringify({
+                    pass: pass
+                  })
+                })
+                .then(data=>{
+                  return  data.json();
+                }).then(result=>{
+                  if (result.error){
+                    const div = document.getElementById("error").innerHTML=result.error;
+                  }else{
+                  window.location.replace(result.url);}
+                }).catch(err=>{console.log(err);})
+              }
+              
+            if (data.url){
+                window.location.replace(data.url);
+            }
+          }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+  
+
+
+  
+      
+  </script>
+  

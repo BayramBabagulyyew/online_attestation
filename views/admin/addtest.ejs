@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%=pageTitle%></title>
+    <link rel="stylesheet" href="/css/admin.css" />
+  </head>
+  <header role="banner">
+    <h1>Online Test admin</h1>
+    <ul class="utilities">
+      <br />
+      <li class="users"><a href="/admin/profile?id=<%=id%>">My Account</a></li>
+      <li class="logout warn"> <a href="/admin/logout?id=<%=id%>">Log Out</a></li>
+    </ul>
+  </header>
+
+  <nav role="navigation">
+    <ul class="main">
+      <li class="dashboard"><a href="/admin?id=<%=id%>">Dashboard</a></li>
+
+      <li class="write">
+        <a href="/admin/add-test?id=<%=id%>" method="POST">Tests</a>
+      </li>
+      <li class="users"><a href="#">Manage Users</a></li>
+    </ul>
+  </nav>
+
+  <main role="main">
+    <% if (!add) { %> <% for(let group of grouptest) { %>
+
+    <div style="display: flex">
+      <h2><%=group.group.group%></h2>
+      <p></p>
+      <button
+        class="btn"
+        id="group"
+        value="<%=group.group.id%>"
+        onclick="grp('<%=group.group.id%>')"
+      >
+        Add test
+      </button>
+      
+        Status:
+        <button
+          class="btn"
+          id="<%=group.group.id%>"
+          onclick="status('<%=group.group.id%>')"
+          value="<%=group.group.groupAdmin.status%>"
+        >
+          <%=group.group.groupAdmin.status%>
+        </button>
+        Total Tests: <b><%= group.count%></b>
+      </p>
+    </div>
+
+    <hr />
+    <% } %> <% } else {%>
+
+    <div class="add-question">
+      <h2>Add Question</h2>
+      <div id="error" style="color: green; margin-left: 35vw"></div>
+      <form>
+        <label for="question-text">Question Text:</label>
+        <textarea id="question" name="question"></textarea>
+
+        <label for="answer-1" style="color: green; font-size: large"
+          >Correct answer:</label
+        >
+        <input type="text" id="1" name="answer" />
+
+        <label for="answer-2" style="color: red">fake answer 1:</label>
+        <input type="text" id="2" name="answer1" />
+
+        <label for="answer-3" style="color: red">fake answer 2:</label>
+        <input type="text" id="3" name="answer2" />
+
+        <label for="answer-4" style="color: red">fake answer 3:</label>
+        <input type="text" id="4" name="answer3" />
+
+        <button type="button" class="btn" onclick="add(this)">
+          Add Question
+        </button>
+      </form>
+    </div>
+    <% } %>
+  </main>
+</html>
+
+<script>
+  function grp(btn) {
+    fetch(`/admin/add?id=<%=id%>&group=${btn}`, {
+      method: "POST",
+    })
+      .then((data) => {
+        return data.json();
+      })
+      .then((result) => {
+        window.location.replace(result.url);
+      })
+      .catch((err) => console.log(err));
+  }
+
+  function add(btn) {
+    const question = btn.parentNode.querySelector("[name=question]");
+    const correct = btn.parentNode.querySelector("[name=answer]");
+    const answer1 = btn.parentNode.querySelector("[name=answer1]");
+    const answer2 = btn.parentNode.querySelector("[name=answer2]");
+    const answer3 = btn.parentNode.querySelector("[name=answer3]");
+
+    fetch("/admin/add-test?id=<%= id %>&group=<%= group%>", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        question: question.value,
+        correct: correct.value,
+        answer1: answer1.value,
+        answer2: answer2.value,
+        answer3: answer3.value,
+      }),
+    })
+      .then((data) => {
+        return data.json();
+      })
+      .then((result) => {
+        const success = document.getElementById("error");
+        setTimeout(() => {
+          success.innerHTML = "";
+        }, 5000);
+        success.innerHTML = "Success";
+        question.value = "";
+        correct.value = "";
+        answer1.value = "";
+        answer2.value = "";
+        answer3.value = "";
+      })
+      .catch((err) => console.log(err));
+  }
+
+  function status(group) {
+    console.log(group);
+    fetch("/admin/status?id=<%=id%>", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        groupId: group,
+      }),
+    })
+      .then((data) => {
+        return data.json();
+      })
+      .then((result) => {
+        const btn = document.getElementById(group);
+        if (result) {
+          btn.setAttribute("style", "background-color: green");
+        }
+        btn.value = result;
+        btn.innerHTML = result;
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+</script>

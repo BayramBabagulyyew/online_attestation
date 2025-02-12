@@ -1,0 +1,167 @@
+<%- include("./includes/head.ejs")%>
+<%- include("./includes/navbar.ejs")%>
+
+    <form class="tests">
+      
+
+      <h2 id="questionNumber"></h2>
+      <div id="question" style="font-size: xx-large;text-align: center;"></div>
+        <br>
+      <div class="button-group">
+        <button type="button" class="tstbtn" id="1" name="answer1" value="a">
+          
+        </button>
+        <button type="button" class="tstbtn" id="2" name="answer2" value="b">
+          
+        </button>
+        <button type="button" class="tstbtn" id="3" name="answer3" value="c">
+         
+        </button>
+        <button type="button" class="tstbtn" id="4" name="answer4" value="d">
+        
+        </button>
+      </div>
+
+      <button type="button" class="btn" >Next</button>
+    </form>
+
+    <script>
+
+        let qn="<%= question%>";
+      fetch("/test/testing",{
+        method: "POST",
+        headers:{
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          adminId: "<%= adminId %>"
+        })
+      })
+      .then(res=>res.json()
+      )
+      .then(result=>{
+
+        const tests = result.tests;
+        const rankId = result.rankId
+
+
+          var test = tests[qn];
+
+          const h2 = document.getElementById("questionNumber").innerHTML=1+ +qn;
+          const div = document.getElementById("question").innerHTML=test.question;
+          
+          const rand = []
+
+          while (rand.length < 4) {
+            const randomNum = Math.floor(Math.random() * 4) + 1;
+            // Check if the random number is already in the result array
+            if (!rand.includes(randomNum)) {
+              rand.push(randomNum);
+           }
+          }
+          const btn1 = document.getElementById(rand[0]);
+          btn1.innerHTML = test.answer;
+          btn1.value=1;
+          const btn2 = document.getElementById(rand[1]);
+          btn2.innerHTML = test.fake1;
+          btn2.value=0;
+          const btn3 = document.getElementById(rand[2])
+          btn3.innerHTML = test.fake2;
+          btn3.value=0;
+          const btn4 = document.getElementById(rand[3]);
+          btn4.innerHTML = test.fake3;
+          btn4.value=0;
+
+          
+          const buttons = document.querySelectorAll(".button-group button");
+          const submitBtn = document.querySelector('.btn');
+
+          buttons.forEach((button) => {
+            button.addEventListener("click", () => {
+              // remove selected class from all buttons in the group
+              buttons.forEach((btn) => btn.classList.remove("selected"));
+              // add selected class to the clicked button
+              button.classList.add("selected");
+            });
+           
+          });
+          
+          submitBtn.addEventListener("click", () => {
+            const elements = document.querySelectorAll('.selected');
+            elements.forEach(button => {  
+
+              fetch("/test/next",{
+                method: "POST",
+                headers:{
+                  "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                  question: qn,
+                  testId:test.id,
+                  answer: button.value,
+                  adminId: "<%= adminId %>",
+                  rankId: rankId
+                })
+              }).then(data=>{
+                return data.json();
+              })
+              .then(result =>{
+                buttons.forEach((btn) => btn.classList.remove("selected"));
+                if (result.url){
+                  alert("Your test succesfully completed!");
+              window.location.replace(result.url);
+
+                }
+                  qn++;
+                
+                  var test = tests[qn];
+
+                  const h2 = document.getElementById("questionNumber").innerHTML=1+ +qn;
+                  const div = document.getElementById("question").innerHTML=test.question;
+
+                  const rand = []
+
+                  while (rand.length < 4) {
+                    const randomNum = Math.floor(Math.random() * 4) + 1;
+                    // Check if the random number is already in the result array
+                    if (!rand.includes(randomNum)) {
+                      rand.push(randomNum);
+                  }
+                  }
+                  const btn1 = document.getElementById(rand[0]);
+                  btn1.innerHTML = test.answer;
+                  btn1.value=1;
+                  const btn2 = document.getElementById(rand[1]);
+                  btn2.innerHTML = test.fake1;
+                  btn2.value=0;
+                  const btn3 = document.getElementById(rand[2])
+                  btn3.innerHTML = test.fake2;
+                  btn3.value=0;
+                  const btn4 = document.getElementById(rand[3]);
+                  btn4.innerHTML = test.fake3;
+                  btn4.value=0;
+
+
+                  
+              })
+              .catch(err => console.log(err))
+
+            });
+
+
+
+
+         
+            
+          });
+          
+        
+        
+      });
+      
+        var k=0;
+ 
+  
+    </script>
+  </body>
+</html>

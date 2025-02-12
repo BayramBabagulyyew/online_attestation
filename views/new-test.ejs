@@ -1,0 +1,45 @@
+<%- include("./includes/head.ejs")%>
+<%- include("./includes/navbar.ejs")%>
+
+    <form class="tests" action="/test/new-test" method="POST">
+      <h1>Add New Question and Answer Page</h1>
+
+      <h2>Question</h2>
+      <label for="Answer">Answer</label>
+      <input type="text" class="input" name="question" value="">
+      <br>
+      <hr>
+      <div class="button-group">
+        <label for="correct">Correct Answer</label>
+        <input type="text" class="inputN" name="correct" value="">
+        
+        <label for="mistake">Mistake Answer</label>
+        <input type="text" class="inputN" name="mistake1" value="">
+
+        <label for="mistake">Mistake Answer</label>
+        <input type="text" class="inputN" name="mistake2" value="">
+
+        <label for="mistake">Mistake Answer</label>
+        <input type="text" class="inputN" name="mistake3" value="">
+      </div>
+
+      <button type="submit" class="btn">Add</button>
+    </form>
+
+    <script>
+      const buttons = document.querySelectorAll(".button-group button");
+      const submitBtn = document.querySelector('input[type="submit"]');
+
+      buttons.forEach((button) => {
+        button.addEventListener("click", () => {
+          // remove selected class from all buttons in the group
+          buttons.forEach((btn) => btn.classList.remove("selected"));
+          // add selected class to the clicked button
+          button.classList.add("selected");
+          // enable the submit button
+          submitBtn.disabled = false;
+        });
+      });
+    </script>
+  </body>
+</html>

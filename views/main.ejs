@@ -1,0 +1,108 @@
+<%- include('./includes/head')%>
+<%- include('./includes/navbar')%>
+
+    <main>
+      <div id="error"><%= error%></div>
+      <% if (available.length > 0) { %>
+        <h3 style="margin: auto;">Available tests: <%=available.length%></h3>
+        <% for (let admin of available) {  %>
+      <form class="form">
+      <button onclick="start('/test/test?ad=<%= admin.admin.id %>')" type="button" class="btn" style="margin-bottom: 50px; display: flex; justify-content: space-evenly;">  <p><%= admin.admin.username %></p> <p> Start Test</p> </button>
+      </form>
+      <% } } else { %>
+        <h2 style="font-family: 'Courier New', Courier, monospace; color: red;text-decoration: underline;">No available Test!</h2>
+        <% } %>
+      <table id="rank">
+        <tr>
+          <th style="background-color: green;">Group: <%= group.group %></th>
+          <th style="background-color: green;">Teacher: <% if (available[0]) { %><%= available[0].admin.username %><% } %></th>
+          <th style="background-color: green;"></th>  
+        </tr>
+        <tr>
+          <th>Rank</th>
+          <th>Name</th>
+          <th>Score</th>
+        </tr>
+        
+        
+        </tr>
+      </table>
+    </main>
+  </body>
+</html>
+<script>
+
+
+  
+  let order = 0;
+
+  "<% if (available[0]) { %>"
+  fetch("/test/ranks?ad=<%= available[0].admin.id %>&g=<%= group.id%>",{
+  method:"POST"
+})
+.then(data=>{
+  return data.json()
+})
+.then(ranks=>{
+  const table = document.getElementById("rank")
+
+  ranks.forEach(rank => {
+  const tr = document.createElement("tr");
+  table.appendChild(tr);
+  const td =document.createElement("td");
+  tr.appendChild(td);
+  td.innerHTML= ++order
+
+  const td2 =document.createElement("td");
+  tr.appendChild(td2);
+  td2.innerHTML= rank.user.username
+ 
+  const td3 =document.createElement("td");
+  tr.appendChild(td3);
+  if(!rank.rank || !rank.rank.rank)
+  {
+    td3.innerHTML = "Gatnashmady";
+  } 
+  else{
+  td3.innerHTML= rank.rank.rank ;
+  }
+});
+
+
+})
+.catch(err=>{
+  console.log(err);
+});
+"<%}%>"
+
+
+
+
+function start(btn){
+  console.log(btn);
+  fetch(btn,{
+    method: "POST",
+    headers:{
+      "Content-Type": "application/json",
+    },
+    
+  }).then(data=>{
+    return data.json();
+  })
+  .then(result=>{
+    if (result.error){
+      const div = document.getElementById("error").innerHTML=result.error;
+    }
+    if(result.url){
+      window.location.replace(result.url);
+    }
+  })
+  .catch(err=>{
+    console.log(err);
+  })
+
+}
+
+
+
+</script>
