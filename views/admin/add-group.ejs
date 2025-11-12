@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%=pageTitle%></title>
+    <link rel="stylesheet" href="/css/admin.css" />
+  </head>
+  <body>
+    <header role="banner">
+      <h1>Bilim admin</h1>
+      <ul class="utilities">
+        <br />
+        <li class="users"><a href="/admin/profile?id=<%=id%>">Hasabym</a></li>
+        <li class="logout warn">
+          <a href="/admin/logout?id=<%=id%>">Çykmak</a>
+        </li>
+      </ul>
+    </header>
+    <nav role="navigation">
+      <ul class="main">
+        <li class="dashboard"><a href="/admin?id=<%=id%>">Umumy</a></li>
+
+        <li class="write">
+          <a href="/admin/add-test?id=<%=id%>" method="POST">Testler</a>
+        </li>
+        <li class="users"><a href="/admin/add-group?id=<%=id%>">Groups</a></li>
+      </ul>
+    </nav>
+
+    <main role="main">
+      <section>
+        <h2>Täze Topar Döret</h2>
+        <form action="/admin/add-group?id=<%=admin.id%>" method="POST">
+          <label for="group">Toparyň ady / nomer</label>
+          <input id="group" name="group" required />
+
+          <label for="users">Ulanyjylar (birden köp saýlap bolar)</label>
+          <select id="users" name="userIds" multiple size="8">
+            <% if (users) { %> <% users.forEach(function(user){ %>
+            <option value="<%=user.id%>">
+              <%=user.username%> - <%=user.cardId%>
+            </option>
+            <% }) %> <% } %>
+          </select>
+
+          <button type="submit">Goşmak</button>
+        </form>
+      </section>
+
+      <section>
+        <h2>Toparlar</h2>
+        <ul>
+          <% if (groups && groups.length>0) { %> <% groups.forEach(function(g){
+          %>
+          <li>Topar: <strong><%=g.group%></strong></li>
+          <% }) %> <% } else { %>
+          <li>Topar tapylmady</li>
+          <% } %>
+        </ul>
+      </section>
+    </main>
+  </body>
+</html>

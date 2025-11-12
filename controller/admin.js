@@ -1,6 +1,7 @@
 const Group = require("../models/group");
 const Admin = require("../models/admin");
 const GroupAdmin = require("../models/group-admin");
+const User = require("../models/users");
 
 exports.getAdmin = (req, res, next) => {
   const adminId = req.query.id;
@@ -83,7 +84,22 @@ exports.getAddTest = (req, res, next) => {
 };
 
 exports.getAdminGroupUsers = (req, res, next) => {
-  const { id, group } = req.query;
+  const id = req.query.id;
+
+  Admin.findByPk(id)
+    .then((admin) => {
+      Promise.all([admin.getGroups(), User.findAll()])
+        .then(([groups, users]) => {
+          res.render("admin/add-group", {
+            pageTitle: "Groups",
+            admin: admin,
+            groups: groups,
+            users: users,
+          });
+        })
+        .catch((err) => console.log(err));
+    })
+    .catch((err) => console.log(err));
 };
 
 exports.getAdminProfile = (req, res, next) => {
@@ -127,22 +143,60 @@ exports.postAddTest = (req, res, next) => {
     });
 };
 
+exports.getAddGroup = async (req, res, next) => {
+  const adminId = req.query.id;
+
+  const admin = await Admin.findByPk(adminId);
+  const users = await User.findAll();
+  const groups = await Group.findAll();
+
+  return res.render("admin/add-group", {
+    pageTitle: "Goşmak",
+    error: null,
+    admin: admin,
+    users,
+    groups,
+    // groups: groups,
+    // groupUser: groupUser,
+  });
+};
+
 exports.postAddGroup = (req, res, next) => {
   const adminId = req.query.id;
   const group = req.body.group;
+  // userIds can be a single id or an array from the multi-select
+  let userIds = req.body.userIds;
+  if (!userIds) userIds = [];
+  else if (!Array.isArray(userIds)) userIds = [userIds];
 
   Admin.findByPk(adminId)
     .then((admin) => {
-      admin.getGroups({ where: { group: group } }).then((groups) => {
-        if (groups) {
-          return res.status(422).json({ message: "Alreade added" });
+      return admin.getGroups({ where: { group: group } }).then((groups) => {
+        // groups is an array; if any exist treat as duplicate
+        if (groups && groups.length > 0) {
+          return res.status(422).json({ message: "Already added" });
         }
 
-        admin
+        return admin
           .createGroup({
             group: group,
           })
-          .then(res.status(200).json({ message: "Success" }))
+          .then((createdGroup) => {
+            // assign selected users to this group (set groupId on users)
+            if (userIds.length > 0) {
+              return User.update(
+                { groupId: createdGroup.id },
+                { where: { id: userIds } }
+              )
+                .then(() => res.status(200).json({ message: "Success" }))
+                .catch((err) => {
+                  console.log(err);
+                  res.status(500).json({ message: "Failed to assign users" });
+                });
+            }
+
+            return res.redirect(301, `/admin/add-group?id=${adminId}`);
+          })
           .catch((err) => console.log(err));
       });
     })

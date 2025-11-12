@@ -17,6 +17,8 @@ router.post("/add-test", adminController.postAddTest);
 
 router.post("/status", adminController.postStatus);
 
+router.get("/add-group", adminController.getAddGroup);
+
 router.post("/add-group", adminController.postAddGroup);
 
 router.post("/delete", adminController.postDelete);

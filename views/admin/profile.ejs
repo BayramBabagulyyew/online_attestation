@@ -46,43 +46,43 @@
     </style>
   </head>
   <header role="banner">
-    <h1>Online Test admin</h1>
+    <h1>Bilim admin</h1>
     <ul class="utilities">
       <br />
-      <li class="users"><a href="/admin/profile?id=<%=id%>">My Account</a></li>
-      <li class="logout warn"> <a href="/admin/logout?id=<%=id%>">Log Out</a></li>
+      <li class="users"><a href="/admin/profile?id=<%=id%>">Hasabym</a></li>
+      <li class="logout warn"> <a href="/admin/logout?id=<%=id%>">Çykmak</a></li>
     </ul>
   </header>
 
   <nav role="navigation">
     <ul class="main">
-      <li class="dashboard"><a href="/admin?id=<%=id%>">Dashboard</a></li>
-      <li class="write"><a href="/admin/add-test?id=<%=id%>" method="POST">Tests</a></li>
-      <li class="users"><a href="#">Manage Users</a></li>
+      <li class="dashboard"><a href="/admin?id=<%=id%>">Umumy</a></li>
+      <li class="write"><a href="/admin/add-test?id=<%=id%>" method="POST">Testler</a></li>
+      <li class="users"><a href="#">Ulanyjylary dolandyrmak</a></li>
     </ul>
   </nav>
   <div class="main">
-    <h2>IDENTITY</h2>
+    <h2>Barada</h2>
     <div class="card">
         <div class="card-body">
             <i class="fa fa-pen fa-xs edit"></i>
             <table>
                 <tbody>
                     <tr>
-                        <td>Name</td>
+                        <td>Ady</td>
                         <td>:</td>
                         <td><%= admin.username%></td>
                     </tr>
                     <tr>
-                        <td>Password</td>
+                        <td>Parol</td>
                         <td>:</td>
                         <td><%= admin.password %></td>
                     </tr>
                     
                 </tbody>
             </table>
-            <button class="btn">Edit</button>
-            <button class="btn" onclick="del('<%=id%>')">Delete account</button>
+            <button class="btn">Üýtgetmek</button>
+            <button class="btn" onclick="del('<%=id%>')">Hasaby poz</button>
         </div>
     </div>
 </html>
